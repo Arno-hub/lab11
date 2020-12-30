@@ -1,0 +1,63 @@
+Question 1
+On installe la chaîne de cross compilation via la commande suivante : 
+sudo apt install gcc-arm-linux-gnueabi
+
+Question 2
+
+On retrouve le chemin d'accès au cross compilateur à l'aide de la commande : 
+dpkg -L -gccarm-linux-gnueabi 
+
+On relève le Path suivant : 
+/usr/bin/arm-linux-gnueabi-gcc
+
+Question 3
+
+On ajoute les variables d'environnement ARCH et CROSS_COMPILE dans le fichier bashrc pour qu'à chaque démarrage d'un terminal les deux variables soient reconnues.
+On ouvre le fichier bashrc via la commande --> vim ~/.bashrc
+A la fin du fichier on rajoute les commandes suivantes : 
+export ARCH=arm
+export CROSS_COMPILE=arm-linux-gnueabi-
+ON vérifi que ces variables aient bien été crée via les commandes : 
+echo $ARCH 
+arm
+
+echo $CROSS_COMPILE 
+arm-linux-gnueabi-
+
+
+Question 4
+Pour vérifier si le cross compilateur est accessible, on tape la commande 
+arm-linux-gnueabi-
+
+On remarque que notre cross compilateur est accessible depuis n'importe quels endroits puisqu' en tapant le début de commande arm-linux-gnueabi-... on nous propose le reste des commandes --> arm-linux-gnueabi-cpp ; arm-linux-gnueabi-gcov-tool-7 ...
+
+
+Question 5
+Pour évoquer le cross-compilateur et non pas le compilateur natif
+Il faut ajouter le prefix "arm-linux-gnueabi-" au compilateur natif "gcc". 
+Pour ce faire dans le fichier Makefile, On déclare une variable $CCP prenant en valeur la variable d'environnement $CROSS_COMPILE qui prend en paramètre le cross compilateur. 
+On ajoute ensuite à chaque règle de compilation cette variable avant le compilateur natif tel que : 
+$(addsuffix ${CC} ,${CCP}) ${CC_OPTIONS}
+
+La commande addsuffix permet de joindre le compilateur natif juste après le cross compilateur.
+
+Question 6
+
+En lançant la commande make, on remarque que c'est bien le cross compilateur qui a été appélé : 
+
+arm-linux-gnueabi-gcc   -c test.c
+arm-linux-gnueabi-gcc   -c max.c
+arm-linux-gnueabi-gcc   -c min.c
+arm-linux-gnueabi-gcc   -c var.c
+arm-linux-gnueabi-gcc   -o test.exe test.o max.o min.o var.o 
+Mode Release
+
+Question 7 
+En executant le binaire test.exe 
+On obtient le message d'erreur suivant : 
+
+bash: ./test.exe: cannot execute binary file: Exec format error
+
+
+Ceci est dû au fait que l'on ne peut pas executer un fichier cross-compilé sur l'ordinateur. 
+
